@@ -1,5 +1,6 @@
 import Flutter
 import HealthKitReporter
+import HealthKit
 
 public class SwiftHealthKitReporterPlugin: NSObject, FlutterPlugin {
     private enum Method: String {
@@ -664,7 +665,13 @@ extension SwiftHealthKitReporterPlugin {
         do {
             let query = try reporter.reader.sampleQuery(
                 type: type,
-                predicate: predicate
+                predicate: predicate,
+                sortDescriptors: [
+                    NSSortDescriptor(
+                        key: HKSampleSortIdentifierStartDate,
+                        ascending: true
+                    )
+                ]
             ) { (_, samples, error) in
                 guard error == nil else {
                     result(
