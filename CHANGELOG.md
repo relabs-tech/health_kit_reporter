@@ -1,3 +1,15 @@
+## [1.4.1] - 12.09.2021
+
+* Fix characteristic parsing if not all types are requested for reading
+
+## [1.4.0] - 05.09.2021
+
+* Activity Move mode added
+* Wheelchair use added
+* Workout activity type added
+* Workout configuration fix
+* Unit testing DTOs
+
 ## [1.3.1] - 28.05.2021
 
 * Fix with error objects coming from Swift

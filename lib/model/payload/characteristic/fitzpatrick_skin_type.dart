@@ -1,5 +1,3 @@
-import '../../../exceptions.dart';
-
 /// Equivalent of [FitzpatrickSkinType]
 /// from [HealthKitReporter] https://cocoapods.org/pods/HealthKitReporter
 ///
@@ -20,7 +18,7 @@ enum FitzpatrickSkinType {
 }
 
 extension Description on FitzpatrickSkinType {
-  String get string {
+  String get description {
     switch (this) {
       case FitzpatrickSkinType.notSet:
         return 'na';
@@ -41,8 +39,8 @@ extension Description on FitzpatrickSkinType {
 }
 
 extension FitzpatrickSkinTypeFactory on FitzpatrickSkinType {
-  static FitzpatrickSkinType from(String string) {
-    switch (string) {
+  static FitzpatrickSkinType? from(String? description) {
+    switch (description) {
       case 'na':
         return FitzpatrickSkinType.notSet;
       case 'I':
@@ -58,7 +56,7 @@ extension FitzpatrickSkinTypeFactory on FitzpatrickSkinType {
       case 'VI':
         return FitzpatrickSkinType.VI;
       default:
-        throw InvalidValueException('Unknown case: $string');
+        return null;
     }
   }
 }

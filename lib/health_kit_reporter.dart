@@ -649,7 +649,6 @@ class HealthKitReporter {
   ///
   static Future<bool> save(Sample sample) async {
     final arguments = sample.parsed();
-    print(arguments);
     return await _methodChannel.invokeMethod('save', arguments);
   }
 }
