@@ -809,7 +809,7 @@ extension SwiftHealthKitReporterPlugin {
             do {
                 let query = try reporter.reader.heartbeatSeriesQuery(
                     predicate: predicate
-                ) { (serie, error) in
+                ) { (series, error) in
                     guard error == nil else {
                         result(
                             FlutterError(
@@ -821,22 +821,12 @@ extension SwiftHealthKitReporterPlugin {
                         return
                     }
                     do {
-                        guard let serie = serie else {
-                            result(
-                                FlutterError(
-                                    code: "HeartbeatSeriesQuery",
-                                    message: "Series samples was null",
-                                    details: nil
-                                )
-                            )
-                            return
-                        }
-                        result(try serie.encoded())
+                        result(try series.encoded())
                     } catch {
                         result(
                             FlutterError(
                                 code: "HeartbeatSeriesQuery",
-                                message: "Error in json encoding of serie: \(String(describing: serie))",
+                                message: "Error in json encoding of beat by beat series: \(series)",
                                 details: error
                             )
                         )
@@ -1427,13 +1417,31 @@ extension SwiftHealthKitReporterPlugin {
     }
     private func parse(arguments: [String: Any]) throws -> Sample {
         if let quantity = arguments["quantity"] as? [String: Any] {
-            return try Quantity.make(from: quantity)
+            let sample = try Quantity.make(from: quantity)
+            return sample.copyWith(
+                startTimestamp: sample.startTimestamp.secondsSince1970,
+                endTimestamp: sample.endTimestamp.secondsSince1970
+            )
         }
         if let category = arguments["category"] as? [String: Any] {
-            return try Category.make(from: category)
+            let sample = try Category.make(from: category)
+            return sample.copyWith(
+                startTimestamp: sample.startTimestamp.secondsSince1970,
+                endTimestamp: sample.endTimestamp.secondsSince1970
+            )
         }
         if let workout = arguments["workout"] as? [String: Any] {
-            return try Workout.make(from: workout)
+            let sample = try Workout.make(from: workout)
+            return sample.copyWith(
+                startTimestamp: sample.startTimestamp.secondsSince1970,
+                endTimestamp: sample.endTimestamp.secondsSince1970,
+                workoutEvents: sample.workoutEvents.map { event in
+                    event.copyWith(
+                        startTimestamp: event.startTimestamp.secondsSince1970,
+                        endTimestamp: event.endTimestamp.secondsSince1970
+                    )
+                }
+            )
         }
         throw HealthKitError.invalidValue("Invalid arguments: \(arguments)")
     }
